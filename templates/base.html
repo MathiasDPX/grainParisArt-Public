@@ -4,27 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js'></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
     <link rel="shortcut icon" type="image/png" href="static/images/favicon.png"/>
-    <title>grainParisArt</title>
+    <title>CinéBrest</title>
     {% block head %} {% endblock %}
 </head>
 
 <header id="headerTop">
     <div class="divHeader">
-        <h1 class="textLogo_header">GrainParisArt</h1>
+        <h1 class="textLogo_header">CinéBrest</h1>
         <p>Quand ça va pas, y aura toujours le cinéma</p>
     </div>
 </header>
 <body>
     {% block body %} {% endblock %}
-</body> 
+</body>
 
 <footer>
     <div class="container_footer">
-        <p>Fait avec amour par Solène Derniaux</p>
-        <p>©Tous droits réservés</p>
+        <a>Fait avec amour par <a href="https://www.solenederniaux.fr/">Solène Derniaux</a><br><a href="https://coolcraft.ovh">Adapté pour Brest par MathiasDPX</a></p>
+        <p>©Tous droits réservés<br><a href="https://github.com/MathiasDPX/grainParisArt/tree/brest">Disponible sur GitHub</a></p>
     </div>
 </footer>
 </html>

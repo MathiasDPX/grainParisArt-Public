@@ -1,36 +1,19 @@
 from flask import Flask, render_template, request
-from datetime import datetime, timedelta
+from datetime import timedelta
+from dotenv import load_dotenv
+from os import getenv
 
-# IMPORT DES MODULES 
+load_dotenv()
+
+# IMPORT DES MODULES
 from modules.Classes import *
 
-cinemas = {
-    "C0071": "Écoles Cinéma Club",
-    "C2954": "MK2 Bibliothèque",
-    "C0050": "MK2 Beaubourg",
-    "W7504": "Épée de bois",
-    "C0076": "Cinéma du Panthéon",
-    "C0089": "Max Linder Panorama",
-    "C0013": "Luminor Hotel de Ville",
-    "C0072": "Le Grand Action",
-    "C0099": "MK2 Parnasse",
-    "C0073": "Le Champo",
-    "C0020": "Filmothèque du Quartier Latin",
-    "C0074": "Reflet Medicis",
-    "C0159": "UGC Ciné Cité Les Halles",
-    "C0026": "UGC Ciné Cité Bercy"
-}
+theaters = [Theater(data["node"]) for data in
+            requests.get("https://www.allocine.fr/_/localization_city/Brest").json()["values"]["theaters"]]
 
-theaters: list[Theater] = []
-for id, name in cinemas.items():
-    theaters.append(Theater({
-        "name": name,
-        "internalId": id,
-        "location": None
-    }))
 
 def getShowtimes(date):
-    showtimes:list[Showtime] = []
+    showtimes: list[Showtime] = []
 
     for theater in theaters:
         showtimes.extend(theater.getShowtimes(date))
@@ -56,7 +39,6 @@ def getShowtimes(date):
                 "seances": {}
             }
 
-            
         if theater.name not in data[movie.title]["seances"].keys():
             data[movie.title]["seances"][theater.name] = []
 
@@ -68,13 +50,13 @@ def getShowtimes(date):
 
     return data
 
+
 showtimes = []
 for i in range(0, 7):
-    day_showtimes = getShowtimes(datetime.today()+timedelta(days=i))
+    day_showtimes = getShowtimes(datetime.today() + timedelta(days=i))
     showtimes.append(day_showtimes)
-    print(f"{len(day_showtimes)} séances récupéré {i+1}/7!")
+    print(f"{len(day_showtimes)} séances récupéré {i + 1}/7!")
 
-app = Flask(__name__)
 
 def translateMonth(num: int):
     match num:
@@ -92,6 +74,7 @@ def translateMonth(num: int):
         case 12: return "déc"
         case _: return "???"
 
+
 def translateDay(weekday: int):
     match weekday:
         case 0: return "lun"
@@ -103,6 +86,9 @@ def translateDay(weekday: int):
         case 6: return "dim"
         case _: return "???"
 
+
+app = Flask(__name__)
+
 @app.route('/')
 def home():
     delta = request.args.get("delta", default=0, type=int)
@@ -112,17 +98,20 @@ def home():
 
     dates = []
 
-    for i in range(0,7):
-        day = datetime.today()+timedelta(i)
+    for i in range(0, 7):
+        day = datetime.today() + timedelta(i)
         dates.append({
             "jour": translateDay(day.weekday()),
             "chiffre": day.day,
             "mois": translateMonth(day.month),
-            "choisi": i==delta,
+            "choisi": i == delta,
             "index": i
         })
 
-    return render_template('index.html', page_actuelle='home', films=showtimes[delta], dates=dates)
+    return render_template('index.html',
+                           films=showtimes[delta],
+                           dates=dates,
+                           JAWG_API_KEY=getenv("JAWG_API_KEY"))
 
 if __name__ == '__main__':
-    app.run() 
+    app.run()
